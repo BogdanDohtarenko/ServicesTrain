@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.ideasapp.servicestrain"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ideasapp.servicestrain"
