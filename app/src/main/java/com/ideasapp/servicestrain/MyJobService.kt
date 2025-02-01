@@ -11,6 +11,7 @@ import android.os.IBinder
 import android.util.Log
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -31,8 +32,9 @@ class MyJobService: JobService() {
         return true
     }
 
-    override fun onStopJob(params:JobParameters?):Boolean {
-        TODO("Not yet implemented")
+    override fun onStopJob(params: JobParameters?): Boolean {
+        coroutineScope.coroutineContext.cancel()
+        return true
     }
 
     override fun onCreate() {
@@ -71,8 +73,6 @@ class MyJobService: JobService() {
     }
 
     companion object {
-        fun newIntent(context:Context):Intent {
-            return Intent(context, ForegroundService::class.java)
-        }
+        const val JOB_ID = 1
     }
 }
