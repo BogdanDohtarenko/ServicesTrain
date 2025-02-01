@@ -27,6 +27,7 @@ class MyService: Service() {
                 timerCount += 1
                 Log.d("MyService", "$timerCount")
             }
+            stopSelf()
         }
         return super.onStartCommand(intent,flags,startId)
     }

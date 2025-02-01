@@ -18,6 +18,9 @@
         <service android:name=".ForegroundService"
             android:foregroundServiceType="shortService"
             android:stopWithTask="false" />
+        <service android:name=".MyIntentService"
+            android:foregroundServiceType="shortService"
+            android:stopWithTask="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
