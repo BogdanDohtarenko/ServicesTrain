@@ -47,5 +47,8 @@ class MainActivity : AppCompatActivity() {
             val jobScheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
             jobScheduler.schedule(jobInfo)
         }
+        binding.jobIntentService.setOnClickListener {
+            MyJobIntentService.enqueue(this)
+        }
     }
 }
