@@ -1,16 +1,13 @@
 package com.ideasapp.servicestrain
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationManagerCompat
+import androidx.work.ExistingWorkPolicy
+import androidx.work.WorkManager
 import com.ideasapp.servicestrain.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -49,6 +46,14 @@ class MainActivity : AppCompatActivity() {
         }
         binding.jobIntentService.setOnClickListener {
             MyJobIntentService.enqueue(this)
+        }
+        binding.workManager.setOnClickListener {
+            val workManager = WorkManager.getInstance(applicationContext)
+            workManager.enqueueUniqueWork(
+                "Work",
+                ExistingWorkPolicy.KEEP,
+                MyWorker.getOneTimeWorkRequest()
+            )
         }
     }
 }
