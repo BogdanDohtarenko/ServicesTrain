@@ -14,8 +14,8 @@ class MyJobIntentService: JobIntentService() {
 
     override fun onHandleWork(intent: Intent) {
         var timerCount= 0
-        for(i in 0 until 100) {
-            Thread.sleep(1000)
+        for(i in 0..100 step 2) {
+            Thread.sleep(500)
             timerCount += 1
             Log.d("MyJobIntent", "$timerCount")
         }

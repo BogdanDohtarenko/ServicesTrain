@@ -18,19 +18,27 @@ import kotlinx.coroutines.launch
 class ForegroundService: Service() {
 
     private val coroutineScope = CoroutineScope(Dispatchers.Main)
+    private val builder by lazy {
+        createNotificationBuilder()
+    }
+    private val notificationManager by lazy {
+        getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+    }
 
     override fun onCreate() {
         Log.d("ForegroundService", "OnCreate")
         super.onCreate()
         createNotificationChannel()
-        startForeground(1, createNotification())
+        startForeground(1, builder.build())
     }
 
     override fun onStartCommand(intent:Intent?,flags:Int,startId:Int):Int {
         var timerCount= 0
         coroutineScope.launch {
-            for(i in 0 until 100) {
-                delay(1000)
+            for(i in 0..100 step 2) {
+                delay(500)
+                val notification = builder.setProgress(100, i, false).build()
+                notificationManager.notify(NOTIFICATION_ID, notification)
                 timerCount += 1
                 Log.d("ForegroundService", "$timerCount")
             }
@@ -51,7 +59,6 @@ class ForegroundService: Service() {
     private fun createNotificationChannel() {
         val channelId = "my_channel_id"
         val channelName = "My Notification Channel"
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
         val channel = NotificationChannel(
             channelId,
@@ -63,15 +70,17 @@ class ForegroundService: Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun createNotification(): Notification {
+    private fun createNotificationBuilder(): Notification.Builder {
        return Notification.Builder(this, "my_channel_id")
             .setContentTitle("Notification")
             .setContentText("Your foreground service is working")
             .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .build()
+            .setProgress(100, 0, false)
+            .setOnlyAlertOnce(true)
     }
 
     companion object {
+        private const val NOTIFICATION_ID = 1
         fun newIntent(context: Context): Intent {
             return Intent(context, ForegroundService::class.java)
         }
