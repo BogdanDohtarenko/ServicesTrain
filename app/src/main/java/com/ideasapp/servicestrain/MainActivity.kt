@@ -1,18 +1,36 @@
 package com.ideasapp.servicestrain
 
+import android.app.Service
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
+import android.content.ServiceConnection
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.work.ExistingWorkPolicy
 import androidx.work.WorkManager
 import com.ideasapp.servicestrain.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
     private val binding by lazy {
         ActivityMainBinding.inflate(layoutInflater)
+    }
+
+    private val serviceConnection = object: ServiceConnection {
+        override fun onServiceConnected(name : ComponentName?, service : IBinder?) {
+            val binder = (service as? ForegroundService.LocalBinder) ?: return
+            val foregroundService = binder.getInstance()
+            foregroundService.progressBarChanged =  { progress ->
+                binding.progressBarLoading.progress = progress
+            }
+        }
+
+        override fun onServiceDisconnected(name : ComponentName?) {
+            TODO("Not yet implemented")
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,4 +74,15 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
+    override fun onStart() {
+        super.onStart()
+        bindService(ForegroundService.newIntent(this), serviceConnection, 0)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(serviceConnection)
+    }
+
 }
