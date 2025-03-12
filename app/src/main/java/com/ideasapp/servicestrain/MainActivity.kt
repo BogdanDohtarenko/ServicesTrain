@@ -29,7 +29,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         override fun onServiceDisconnected(name : ComponentName?) {
-            TODO("Not yet implemented")
+            unbindService(this)
         }
     }
 
