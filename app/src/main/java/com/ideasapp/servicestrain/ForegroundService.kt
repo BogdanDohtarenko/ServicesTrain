@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
@@ -25,6 +26,8 @@ class ForegroundService: Service() {
         getSystemService(NOTIFICATION_SERVICE) as NotificationManager
     }
 
+    var progressBarChanged: ((Int) -> Unit)? = null
+
     override fun onCreate() {
         Log.d("ForegroundService", "OnCreate")
         super.onCreate()
@@ -39,6 +42,7 @@ class ForegroundService: Service() {
                 delay(500)
                 val notification = builder.setProgress(100, i, false).build()
                 notificationManager.notify(NOTIFICATION_ID, notification)
+                progressBarChanged?.invoke(i)
                 timerCount += 1
                 Log.d("ForegroundService", "$timerCount")
             }
@@ -52,8 +56,8 @@ class ForegroundService: Service() {
         super.onDestroy()
     }
 
-    override fun onBind(intent:Intent?):IBinder? {
-        TODO("Not yet implemented")
+    override fun onBind(intent:Intent?):IBinder {
+        return LocalBinder()
     }
 
     private fun createNotificationChannel() {
@@ -77,6 +81,10 @@ class ForegroundService: Service() {
             .setSmallIcon(R.drawable.ic_launcher_foreground)
             .setProgress(100, 0, false)
             .setOnlyAlertOnce(true)
+    }
+
+    inner class LocalBinder: Binder() {
+        fun getInstance() = this@ForegroundService
     }
 
     companion object {
