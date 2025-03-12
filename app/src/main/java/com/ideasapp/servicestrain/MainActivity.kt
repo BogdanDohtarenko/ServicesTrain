@@ -1,10 +1,13 @@
 package com.ideasapp.servicestrain
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.app.Service
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.ComponentName
 import android.content.ServiceConnection
+import android.icu.util.Calendar
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
@@ -72,6 +75,14 @@ class MainActivity : AppCompatActivity() {
                 ExistingWorkPolicy.KEEP,
                 MyWorker.getOneTimeWorkRequest()
             )
+        }
+        binding.alarmManager.setOnClickListener {
+            val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+            val calendar = Calendar.getInstance()
+            calendar.add(Calendar.SECOND, 20)
+            val intent = AlarmReceiver.newIntent(this)
+            val pendingIntent = PendingIntent.getBroadcast(this, 100, intent, PendingIntent.FLAG_IMMUTABLE)
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
         }
     }
 
